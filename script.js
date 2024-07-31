@@ -47,4 +47,5 @@ function createIcon(classes) {
 }
 
 //Event Listeners
+
 itemForm.addEventListener('submit', addItem);
