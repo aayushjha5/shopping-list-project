@@ -73,6 +73,27 @@ function clearItems(e) {
     checkUI();
 }
 
+function filterItems(e) {
+
+    //get the text typed in lowercase for matching
+    const text = e.target.value.toLowerCase();
+
+    //get the list items
+    const items = itemList.querySelectorAll('li');
+
+    items.forEach(item => {
+        //for extracting name of item, we are using firstChild method as in html , the name is first child
+        const itemName = item.firstChild.textContent.toLowerCase();
+
+        //matching text in filteritem box with listitems items
+        if (itemName.indexOf(text) != -1) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    })
+}
+
 function checkUI() {
     const items = itemList.querySelectorAll('li');
 
@@ -87,9 +108,12 @@ function checkUI() {
 
 //Event Listeners
 
-itemForm.addEventListener('submit', addItem);
-itemList.addEventListener('click', removeItem);
-ClearBtn.addEventListener('click', clearItems);
+itemForm.addEventListener('submit', addItem);  //for adding item in input of form
+itemList.addEventListener('click', removeItem); // when cross icon is clicked
+ClearBtn.addEventListener('click', clearItems); //when clearAll button is clicked
+itemFilter.addEventListener('input', filterItems); // whenever we write something in filter Items input box
+
+
 
 //checks whether item is there or not..
 //based on that triggers if-else condition within it.
