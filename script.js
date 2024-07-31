@@ -3,6 +3,7 @@ const itemForm = document.querySelector('#item-form');
 const itemInput = document.querySelector('#item-input');
 const itemList = document.querySelector('#item-list');
 const ClearBtn = document.querySelector('#clear');
+const itemFilter = document.querySelector('#filter');
 
 //add item 
 
@@ -25,8 +26,9 @@ function addItem(e) {
     const button = createButton('remove-item btn-link text-red');
     li.appendChild(button);
 
-    //adding input to list of items
+    //adding input li to list of items
     itemList.appendChild(li);
+    checkUI();
 
     //clearing input form after addition
     itemInput.value = '';
@@ -53,7 +55,10 @@ function createIcon(classes) {
 
 function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
-        e.target.parentElement.parentElement.remove();
+        if (confirm('Are you sure ?')) {
+            e.target.parentElement.parentElement.remove();
+            checkUI();
+        }
     }
 }
 
@@ -65,6 +70,19 @@ function clearItems(e) {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
+    checkUI();
+}
+
+function checkUI() {
+    const items = itemList.querySelectorAll('li');
+
+    if (items.length === 0) {
+        ClearBtn.style.display = 'none';
+        itemFilter.style.display = 'none';
+    } else {
+        ClearBtn.style.display = 'block';
+        itemFilter.style.display = 'block';
+    }
 }
 
 //Event Listeners
@@ -72,3 +90,7 @@ function clearItems(e) {
 itemForm.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 ClearBtn.addEventListener('click', clearItems);
+
+//checks whether item is there or not..
+//based on that triggers if-else condition within it.
+checkUI();
