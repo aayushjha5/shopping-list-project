@@ -99,16 +99,38 @@ function getItemsFromStorage() {
     return itemsFromStorage;
 
 }
+// onClick item
+
+function onClickItem(e) {
+    if (e.target.parentElement.classList.contains('remove-item')) {
+        removeItem(e.target.parentElement.parentElement);
+    }
+}
+
 
 //remove Item
 
-function removeItem(e) {
-    if (e.target.parentElement.classList.contains('remove-item')) {
-        if (confirm('Are you sure ?')) {
-            e.target.parentElement.parentElement.remove();
-            checkUI();
-        }
+function removeItem(item) {
+    if (confirm('Are you sure ?')) {
+        //remove from DOM
+        item.remove();
+
+        //remove item from localStorage
+        removeItemFromStorage(item.textContent);
+
+        checkUI();
     }
+}
+
+function removeItemFromStorage(item) {
+    //first get items from localstorage
+    let itemsFromStorage = getItemsFromStorage();
+
+    //filter out item to be removed
+    itemsFromStorage = itemsFromStorage.filter((i) => i !== item);
+
+    //re-set to localStorage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
 //Clear Items using clear button
@@ -119,6 +141,10 @@ function clearItems(e) {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
+
+    //clear from localStorage
+    localStorage.removeItem('items');
+
     checkUI();
 }
 
@@ -163,7 +189,7 @@ function init() {
     //Event Listeners
 
     itemForm.addEventListener('submit', onAddItemSubmit);  //for adding item in input of form in DOM and localStorage
-    itemList.addEventListener('click', removeItem); // when cross icon is clicked
+    itemList.addEventListener('click', onClickItem); // when cross icon is clicked
     ClearBtn.addEventListener('click', clearItems); //when clearAll button is clicked
     itemFilter.addEventListener('input', filterItems); // whenever we write something in filter Items input box
     document.addEventListener('DOMContentLoaded', displayItems); //display items when DOM is loaded
