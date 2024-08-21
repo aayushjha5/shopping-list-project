@@ -42,6 +42,11 @@ function onAddItemSubmit(e) {
         itemToEdit.remove();
 
         isEditMode = false;
+    } else {
+        if (checksIfItemExist(newItem)) {
+            alert('Item already exists!');
+            return;
+        }
     }
 
     //below function will take input and add it to itemList
@@ -120,6 +125,11 @@ function onClickItem(e) {
     } else {
         setItemToEdit(e.target);
     }
+}
+
+function checksIfItemExist(item) {
+    const itemsFromStorage = getItemsFromStorage();
+    return itemsFromStorage.includes(item);
 }
 
 function setItemToEdit(item) {
