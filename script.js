@@ -5,6 +5,19 @@ const itemList = document.querySelector('#item-list');
 const ClearBtn = document.querySelector('#clear');
 const itemFilter = document.querySelector('#filter');
 
+
+//runs when DOM is loaded
+function displayItems() {
+    //get items from storage
+    const itemsFromStorage = getItemsFromStorage();
+
+    //load onto the DOM
+    itemsFromStorage.forEach(item => addItemToDOM(item));
+    checkUI(); //added so we can see Filter and Clearall when DOM is loaded
+
+}
+
+
 //add item 
 
 function onAddItemSubmit(e) {
@@ -44,22 +57,6 @@ function addItemToDOM(item) {
     itemList.appendChild(li);
 }
 
-function addItemToStorage(item) {
-    //check whether we already have items in localStorage
-    let itemsFromStorage;
-
-    if (localStorage.getItem('items') === null) {
-        itemsFromStorage = []; //if nothing, set it to empty array
-    } else {
-        itemsFromStorage = JSON.parse(localStorage.getItem('items')); //parse the existing string to array
-    }
-
-    itemsFromStorage.push(item); // adding new  item in variable.
-
-    //convert JSON arr into string and set it to localStorage
-    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
-}
-
 function createButton(classes) {
     const button = document.createElement('button');
     button.className = classes;
@@ -75,6 +72,32 @@ function createIcon(classes) {
     icon.className = classes;
 
     return icon;
+}
+
+function addItemToStorage(item) {
+    //check whether we already have items in localStorage
+    const itemsFromStorage = getItemsFromStorage();
+
+    itemsFromStorage.push(item); // adding new  item in variable.
+
+    //convert JSON arr into string and set it to localStorage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+}
+
+//get items from localStorage
+
+function getItemsFromStorage() {
+    //check whether we already have items in localStorage
+    let itemsFromStorage;
+
+    if (localStorage.getItem('items') === null) {
+        itemsFromStorage = []; //if nothing, set it to empty array
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem('items')); //parse the existing string to array
+    }
+
+    return itemsFromStorage;
+
 }
 
 //remove Item
@@ -132,15 +155,25 @@ function checkUI() {
     }
 }
 
-//Event Listeners
 
-itemForm.addEventListener('submit', onAddItemSubmit);  //for adding item in input of form in DOM and localStorage
-itemList.addEventListener('click', removeItem); // when cross icon is clicked
-ClearBtn.addEventListener('click', clearItems); //when clearAll button is clicked
-itemFilter.addEventListener('input', filterItems); // whenever we write something in filter Items input box
+//Initialize app
+
+function init() {
+
+    //Event Listeners
+
+    itemForm.addEventListener('submit', onAddItemSubmit);  //for adding item in input of form in DOM and localStorage
+    itemList.addEventListener('click', removeItem); // when cross icon is clicked
+    ClearBtn.addEventListener('click', clearItems); //when clearAll button is clicked
+    itemFilter.addEventListener('input', filterItems); // whenever we write something in filter Items input box
+    document.addEventListener('DOMContentLoaded', displayItems); //display items when DOM is loaded
 
 
+    //checks whether item is there or not..
+    //based on that triggers if-else condition within it.
+    checkUI();
+}
 
-//checks whether item is there or not..
-//based on that triggers if-else condition within it.
-checkUI();
+init();
+
+
