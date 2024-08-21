@@ -7,8 +7,8 @@ const itemFilter = document.querySelector('#filter');
 
 //add item 
 
-function addItem(e) {
-    e.preventDefault();
+function onAddItemSubmit(e) {
+    e.preventDefault();  //adding this to stop form from getting saved instantaneously. 
 
     const newItem = itemInput.value;
 
@@ -18,20 +18,46 @@ function addItem(e) {
         return;
     }
 
+    //below function will take input and add it to itemList
+    addItemToDOM(newItem);
+
+    //add item to localStorage
+    addItemToStorage(newItem);
+
+    checkUI();
+
+    //clearing input form after addition
+    itemInput.value = '';
+}
+
+function addItemToDOM(item) {
+
     //Create List item
     const li = document.createElement('li');
-    li.appendChild(document.createTextNode(newItem));
+    li.appendChild(document.createTextNode(item));
 
     //create other listitem elements i.e button and icon within button
     const button = createButton('remove-item btn-link text-red');
     li.appendChild(button);
 
-    //adding input li to list of items
+    //adding input li to list of items in DOM
     itemList.appendChild(li);
-    checkUI();
+}
 
-    //clearing input form after addition
-    itemInput.value = '';
+function addItemToStorage(item) {
+    //check whether we already have items in localStorage
+    let itemsFromStorage;
+
+    if (localStorage.getItem('items') === null) {
+        itemsFromStorage = []; //if nothing, set it to empty array
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem('items')); //parse the existing string to array
+    }
+
+    itemsFromStorage.push(item); // adding new  item in variable.
+
+    //convert JSON arr into string and set it to localStorage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
 function createButton(classes) {
@@ -108,7 +134,7 @@ function checkUI() {
 
 //Event Listeners
 
-itemForm.addEventListener('submit', addItem);  //for adding item in input of form
+itemForm.addEventListener('submit', onAddItemSubmit);  //for adding item in input of form in DOM and localStorage
 itemList.addEventListener('click', removeItem); // when cross icon is clicked
 ClearBtn.addEventListener('click', clearItems); //when clearAll button is clicked
 itemFilter.addEventListener('input', filterItems); // whenever we write something in filter Items input box
