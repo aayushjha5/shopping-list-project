@@ -4,6 +4,8 @@ const itemInput = document.querySelector('#item-input');
 const itemList = document.querySelector('#item-list');
 const ClearBtn = document.querySelector('#clear');
 const itemFilter = document.querySelector('#filter');
+let isEditMode = false; //by default false
+const formBtn = itemForm.querySelector('button');
 
 
 //runs when DOM is loaded
@@ -29,6 +31,17 @@ function onAddItemSubmit(e) {
     if (newItem === '') {
         alert('Please add an item');
         return;
+    }
+
+    //check for edit mode // if yes, remove it from storage and DOM and add the new item
+    if (isEditMode) {
+        const itemToEdit = itemList.querySelector('.edit-mode');
+
+        removeItemFromStorage(itemToEdit.textContent);
+        itemToEdit.classList.remove('edit-mode');
+        itemToEdit.remove();
+
+        isEditMode = false;
     }
 
     //below function will take input and add it to itemList
@@ -104,7 +117,23 @@ function getItemsFromStorage() {
 function onClickItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
         removeItem(e.target.parentElement.parentElement);
+    } else {
+        setItemToEdit(e.target);
     }
+}
+
+function setItemToEdit(item) {
+    isEditMode = true;  //enable isEditMode to true
+
+    itemList.querySelectorAll('li').forEach(i => i.classList.remove('edit-mode'));
+
+    item.classList.add('edit-mode'); //changes css for item
+    formBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Update Item';  //update button contents
+    formBtn.style.backgroundColor = '#228B22';
+
+    //update itemInput
+    itemInput.value = item.textContent;  // item input takes text value of clicked list item
+
 }
 
 
@@ -170,6 +199,8 @@ function filterItems(e) {
 }
 
 function checkUI() {
+
+    itemInput.value = ''; // clears input on check
     const items = itemList.querySelectorAll('li');
 
     if (items.length === 0) {
@@ -179,6 +210,11 @@ function checkUI() {
         ClearBtn.style.display = 'block';
         itemFilter.style.display = 'block';
     }
+
+    formBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Item';
+    formBtn.style.backgroundColor = '#333';
+
+    isEditMode = false;
 }
 
 
